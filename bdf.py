@@ -8,9 +8,9 @@ prg_name = argv[0]
 
 help_msg="""Program to create master reduction files.
 Usage: 
-python3 {prg_name} --create_master_bias [bias files dir] [master bias file name]
-python3 {prg_name} --create_master_dark [dark files dir] [master dark file name] [master bias file path (optional)]
-python3 {prg_name} --create_master_flat [flat files dir] [master flat file name] [master bias file path (optional)] [master dark file path (optional)]
+python3 {prg_name} -b / --create_master_bias [bias files dir] [master bias file name]
+python3 {prg_name} -d / --create_master_dark [dark files dir] [master dark file name] [master bias file path (optional)]
+python3 {prg_name} -f / --create_master_flat [flat files dir] [master flat file name] [master bias file path (optional)] [master dark file path (optional)]
 When creating master flat, insert paths for master bias and master dark or do not insert any!
 """
 
@@ -33,10 +33,12 @@ from proc import create_bias, create_dark, create_flat
 dir_path = argv[2]
 out_name = argv[3]
 
-if main_arg == "--create_master_bias":
+if main_arg == "--create_master_bias" or main_arg == "-b":
+    print(dir_path, out_name)
+    print(argv)
     create_bias(dir_path, out_name)
 
-elif main_arg == "--create_master_dark":
+elif main_arg == "--create_master_dark" or main_arg == "-d":
     try:
         bias_path = argv[4]
     except IndexError:
@@ -44,7 +46,7 @@ elif main_arg == "--create_master_dark":
     else:
         create_dark(dir_path, out_name, bias_path)
 
-elif main_arg == "--create_master_flat":
+elif main_arg == "--create_master_flat" or main_arg == "-f":
     try:
         bias_path = argv[4]
         dark_path = argv[5]
