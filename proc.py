@@ -11,6 +11,9 @@ import glob
 plt.style.use("dark_background")
 plt.rcParams['figure.figsize'] = [14, 7]
 
+def print_err(err_msg):
+    print(f"\033[31mERROR\033[0m: {err_msg}")
+    exit(1)
 
 def trim_fits(arr):
     shape = arr.shape
@@ -106,7 +109,7 @@ def remove_hot_pix(arr, hot_pix_file):
         arr[i, j] = med
     return arr
     
-def create_reduced_image_big(image, bias, dark, flat, out_name, hot_pix_file, exposure_key, bin_size=1, flat_corr_min_val=0.001):
+def create_reduced_image(image, bias, dark, flat, out_name, hot_pix_file, exposure_key, bin_size=1, flat_corr_min_val=0.001):
     """
     Function does image reduction and trimming.
     image, bias, dark, flat - paths to images
@@ -122,7 +125,7 @@ def create_reduced_image_big(image, bias, dark, flat, out_name, hot_pix_file, ex
     ft = trim_fits(ft)
     bias_subtracted = ccdproc.subtract_bias(im, bs)
     dark_subtracted = ccdproc.subtract_dark(bias_subtracted, dk, exposure_time=exposure_key, exposure_unit=u.second, scale=False)
-    flat_corr = ccdproc.flat_correct(dark_subtracted, ft, min_value=0.001)
+    flat_corr = ccdproc.flat_correct(dark_subtracted, ft, min_value=flat_corr_min_val)
     header = flat_corr.header
     fits.writeto(out_name, flat_corr, header, overwrite=True)
     reduced = fits.getdata(out_name)
@@ -135,3 +138,9 @@ def create_reduced_image_big(image, bias, dark, flat, out_name, hot_pix_file, ex
         header["YBINNING"] = bin_size
     reduced = reduced.astype(np.uint16)
     fits.writeto(out_name, reduced, header, overwrite=True)
+
+
+if __name__ == "__main__":
+    dr = "/home/fischwagen/prg/astronomy/BDF/"
+    create_bias("/home/fischwagen/prg/astronomy/BDF/BIAS*.FIT", "mbias.fit")
+

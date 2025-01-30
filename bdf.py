@@ -18,7 +18,6 @@ try:
     main_arg = argv[1]
 except IndexError:
     print_err("Not enough arguments! Run python3 {prg_name} -h / --help to check for program usage")
-    exit(69)
 
 if main_arg == "-h" or main_arg == "--help":
     print(help_msg)
@@ -34,8 +33,6 @@ dir_path = argv[2]
 out_name = argv[3]
 
 if main_arg == "--create_master_bias" or main_arg == "-b":
-    print(dir_path, out_name)
-    print(argv)
     create_bias(dir_path, out_name)
 
 elif main_arg == "--create_master_dark" or main_arg == "-d":
